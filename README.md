@@ -1,6 +1,6 @@
-# 
+# http-server
 
-**Author**: Chris Ball
+**Author**: Chris Ball & Evy Haan
 **Version**: 1.0.0
 
 ## Overview
@@ -13,5 +13,5 @@
 
 
 ## API
-
+cowpy 
 
