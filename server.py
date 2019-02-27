@@ -1,7 +1,10 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from cowpy import cow
-import os
+import requests
+import json
+
+port = 5000
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -26,34 +29,53 @@ class RequestHandler(BaseHTTPRequestHandler):
             return
         elif parsed_path.path == '/cow':
             if parsed_qs:
-                message = parsed_qs['msg'][0]
-                animal = cow.Turkey()
-                msg = animal.milk(message)
+                try:
+                    message = parsed_qs['msg'][0]
+                    animal = cow.Turkey()
+                    msg = animal.milk(message)
+                except KeyError:
+                    self.send_response(400)
+                    self.end_headers()
+                    self.wfile.write(f'<!DOCTYPE html><html><head><title>Sample</title></head><body><header><header><main font-family=monospace><pre>{msg}</pre></br></br><h2>Instructions:</h2><p>In the url, after "/cow" type "?msg=" and your message. Instead of spaces, use the "+" sign, and please avoid using special characters!</p></main></body></html>'.encode())
+                    return
             else:
                 message = "Isn't this fun!? Wanna try?"
                 animal = cow.Tux()
                 msg = animal.milk(message)
 
-            # try:
-            #     user_text = parsed_qs['category'][0]
-            # except KeyError:
-            #     self.send_response_only(400)
-            #     self.end_headers()
-            #     return
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(f'<!DOCTYPE html><html><head><title>Sample</title></head><body><header><header><main font-family=monospace><pre>{msg}</pre></main></body></html>'.encode())
+            self.wfile.write(f'<!DOCTYPE html><html><head><title>Sample</title></head><body><header><header><main font-family=monospace><pre>{msg}</pre></br></br><h2>Instructions:</h2><p>In the url, after "/cow" type "?msg=" and your message. Instead of spaces, use the "+" sign, and please avoid using special characters!</p></main></body></html>'.encode())
         else:
             self.send_response_only(404)
             self.end_headers()
 
     def do_POST(self):
+
+        content_length = int(self.headers.get('Content-Length'))
+        post_body = self.rfile.read(content_length).decode()
+
+        parsed_json = json.loads(post_body)
+        message = parsed_json['msg']
+        animal = cow.Squirrel()
+        msg = animal.milk(message)
+        print(json.dumps({'msg': msg}))
+
         self.send_response(200)
         self.send_header('content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(f'<!DOCTYPE html><html><head><title> cowsay </title></head><body><header><nav><ul><li><a href="/cow">cowsay</a></li></ul></nav><header><main>project description</main></body></html>'.encode())
+
+
+def run_forever():
+    port = 5000
+    server_address = ('localhost', port)
+    server = HTTPServer(server_address, RequestHandler)
+    try:
+        print(f'Starting server on PORT {port}')
+        server.serve_forever()
+    except KeyboardInterrupt:
+        server.server_close()
+        server.shutdown()
 
 if __name__ == "__main__":
-    server_address = ('', 5000)
-    server = HTTPServer(server_address, RequestHandler)
-    server.serve_forever()
+    run_forever()
