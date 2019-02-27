@@ -12,7 +12,7 @@ To run the application, you will want to create a virtual environment with `pipe
 To start, a user can navigate to the index page. For our purposes, we used localhost and port 5000. On that index page, we have a cowsay drawing with a link to take them to the '/cow' route. Once there, they have a set of instructions showing them how to append a query string to the end of the url. When they submit the updated url, the get route will take their query string and convert it to a string that gets passed in to a new cow instance and will return the cowsay drawing with their query string as the text in the word bubble.
 
 ## Architecture
-We used
+We are using Python version 3.7 for this application and utilizing the cowpy, httpie, urllib, json and requests libraries. Please refer to the Pipfile for a list of dependencies.
 
 ## API
 cowpy

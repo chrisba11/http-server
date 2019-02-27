@@ -4,13 +4,11 @@ from cowpy import cow
 import requests
 import json
 
-port = 5000
-
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         """
-        Method to create routes on '/' and '/cow'.
+        Method to create routes on '/' and '/cow' and create cow instances and drawings based on whether there is a query string and what the contents of that query string are.
         """
         parsed_path = urlparse(self.path)
         parsed_qs = parse_qs(parsed_path.query)
@@ -24,7 +22,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
             animal = cow.Stegosaurus()
             msg = animal.milk(link)
-            print(msg)
 
             self.wfile.write(f'<!DOCTYPE html><html><head><title>Click Me</title></head><body><header></header><main style="font-family:monospace; font-weight:bold; color:green;"><pre>{msg}</pre></main></body></html>'.encode())
             return
@@ -46,14 +43,14 @@ class RequestHandler(BaseHTTPRequestHandler):
 
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(f'<!DOCTYPE html><html><head><title>Sample</title></head><body><header><header><main font-family=monospace><pre>{msg}</pre></br></br><h2>Instructions:</h2><p>In the url, after "/cow" type "?msg=" and your message. Instead of spaces, use the "+" sign, and please avoid using special characters!</p></main></body></html>'.encode())
+            self.wfile.write(f'<!DOCTYPE html><html><head><title>{message}</title></head><body><header><header><main font-family=monospace><pre>{msg}</pre></br></br><h2>Instructions:</h2><p>In the url, after "/cow" type "?msg=" and your message. Instead of spaces, use the "+" sign, and please avoid using special characters!</p></main></body></html>'.encode())
         else:
             self.send_response_only(404)
             self.end_headers()
 
     def do_POST(self):
         """
-        Method to create POST route on any path.
+        Method to create POST route on any path that returns a JSON object with the client's query string as the value of key 'msg'.
         """
         content_length = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_length).decode()
@@ -62,7 +59,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         message = parsed_json['msg']
         animal = cow.Squirrel()
         msg = animal.milk(message)
-        print(json.dumps({'msg': msg}))
 
         self.send_response(200)
         self.send_header('content-type', 'text/html')
