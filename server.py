@@ -9,6 +9,9 @@ port = 5000
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        """
+        Method to create routes on '/' and '/cow'.
+        """
         parsed_path = urlparse(self.path)
         parsed_qs = parse_qs(parsed_path.query)
 
@@ -49,7 +52,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-
+        """
+        Method to create POST route on any path.
+        """
         content_length = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_length).decode()
 
@@ -65,6 +70,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 
 def run_forever():
+    """
+    Method to start up the server.
+    """
     port = 5000
     server_address = ('localhost', port)
     server = HTTPServer(server_address, RequestHandler)
