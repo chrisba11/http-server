@@ -14,8 +14,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         link = '<a href="/cow">Click Here for Fun Stuffs</a>'
 
-        # print('this is the message only' + parsed_qs['msg'][0])
-
         if parsed_path.path == '/':
             self.send_response(200)
             self.send_header('content-type', 'text/html')
